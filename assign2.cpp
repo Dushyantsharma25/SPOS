@@ -10,7 +10,7 @@ using namespace std;
 
 int main() {
 
-    vector<pair<int, pair<int,int>>> MNT;   // (MNCT, name ,MDTC);=
+    vector<pair<int, pair<string,int>>> MNT;   // (MNCT, name ,MDTC);=
   
     
     ifstream a;
