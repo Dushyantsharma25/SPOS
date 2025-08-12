@@ -1,0 +1,11 @@
+START 100
+LOAD A
+ADD ='5'
+STORE B
+run equ 1
+LOOP: 
+SUB = '1'
+JMP LOOP
+A DC 10
+B DS 1
+END
