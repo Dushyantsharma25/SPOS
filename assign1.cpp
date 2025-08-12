@@ -20,7 +20,7 @@ int main() {
     vector<pair<int, string>> p;
     
     ifstream a;
-    a.open("base.asm");  // Changed to ifstream to read the file
+    a.open("Assign1.asm");  // Changed to ifstream to read the file
     
     string h;
     int i = 0, j = 0, k = 0, y = 0;
