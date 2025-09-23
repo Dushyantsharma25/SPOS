@@ -1,137 +1,135 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <unordered_map>
+#include<iostream>
+#include<string>
+#include<vector>
+#include<fstream>
+#include<utility>  
 
 using namespace std;
 
 int main() {
-    vector<pair<int, pair<string,int>>> MNT;   // (MNTC, macro name, MDTC)
-    vector<pair<int, string>> MDT;             // (MDTC, macro definition line)
-    unordered_map<string, int> macroNameToMNTC; // For quick lookup
 
-    struct ALAEntry {
-        int mntc;
-        int index;
-        string formal;
-        string actual;
-    };
-
-    vector<ALAEntry> ALA;    // Stores all ALA entries
-
-    ifstream a("Ass.asm");
-
-    string line;
-    int MNTC = 0;
-    int MDTC = 1; // Start MDT counter from 1
-
-    bool isMacro = false;
-
-    // First pass: read macros and build MNT, MDT
-    while(getline(a, line)) {
-        if (line.find("%macro") != string::npos) {
-            MNTC++;
-
-            // Extract macro name and number of args
-            istringstream iss(line);
-            string temp, macroName;
-            int numArgs = 0;
-
-            iss >> temp >> macroName >> numArgs;
-
-            MNT.push_back(make_pair(MNTC, make_pair(macroName, MDTC)));
-            macroNameToMNTC[macroName] = MNTC;
-
-            isMacro = true;
-            continue;
-        }
-
-        if (isMacro) {
-            MDT.push_back(make_pair(MDTC++, line));
-            if (line.find("%endmacro") != string::npos) {
-                isMacro = false;
+    vector<pair<int, pair<string,int>>> MNT;   // (MNTC, name ,MDTC);=
+    vector<pair<int, string>> MDT; // (MDTC , Def);=
+    vector<pair<int,string>> ALA; //(MDTC,ARG);
+  
+    
+    ifstream a;
+    a.open("apass1.asm");  
+    
+    string h;
+    int i = 0;
+    
+    while(getline(a, h)) {  
+        
+        int x = h.length();
+        
+      
+        if (h.find("%macro") != string::npos) {
+            i++;
+            string g = "";
+            for(int j=7;j<x;j++){
+            	if(h[j] == ' '){
+            		break;
+            	}
+            	
+            	g += h[j];
             }
+            
+            MNT.push_back(make_pair(i,make_pair(g,i)));
         }
     }
-
-    a.clear();
-    a.seekg(0);
-
-    // Second pass: parse macro invocations in the code after macros
-    while(getline(a, line)) {
-        // Skip empty lines and lines starting with %macro or %endmacro
-        if (line.find("%macro") != string::npos || line.find("%endmacro") != string::npos) {
-            continue;
-        }
-
-        // Check if line contains macro invocation
-        istringstream iss(line);
-        string firstWord;
-        iss >> firstWord;
-
-        // If first word is a macro name from MNT, parse arguments
-        if (macroNameToMNTC.find(firstWord) != macroNameToMNTC.end()) {
-            int currentMNTC = macroNameToMNTC[firstWord];
-
-            // Get the rest of the line as arguments string
-            string argsLine;
-            getline(iss, argsLine);
-
-            // Remove leading spaces and commas
-            // Tokenize actual arguments by comma
-            vector<string> actualArgs;
-            string arg;
-            stringstream ss(argsLine);
-            while (getline(ss, arg, ',')) {
-                // Trim spaces
-                size_t start = arg.find_first_not_of(" \t");
-                size_t end = arg.find_last_not_of(" \t");
-                if (start != string::npos && end != string::npos)
-                    arg = arg.substr(start, end - start + 1);
-                else
-                    arg = "";
-
-                if (!arg.empty()) {
-                    actualArgs.push_back(arg);
-                }
-            }
-
-            // Add to ALA: map formal args (%1, %2...) to actual arguments
-            for (int i = 0; i < (int)actualArgs.size(); i++) {
-                ALAEntry entry;
-                entry.mntc = currentMNTC;
-                entry.index = i + 1;
-                entry.formal = "%" + to_string(i + 1);
-                entry.actual = actualArgs[i];
-                ALA.push_back(entry);
-            }
-        }
+    
+    a.close();
+    
+    a.open("apass1.asm");  
+    
+    
+    
+    for(auto d : MNT){
+    	
+    	string mac = d.second.first; // taking NAME of Macro
+    	i = d.second.second; //taking MDTC of macro
+    	
+    	bool z = 0;
+    	
+    	while(getline(a, h)) {  
+    	
+    		if (h == "%endmacro") {
+        		z = 0;
+        		break;
+        	}
+		
+		if(z == 1){MDT.push_back(make_pair(i,h));}
+	      
+		if (h.find(mac) != string::npos) {
+			z = 1;
+        	}
+        	
+        	
+    	}
+    	
+    
     }
 
     a.close();
 
-    // Display MNT
-    cout << "MNT (Macro Name Table):\n";
-    cout << "MNTC --> MACRO NAME --> MDTC\n";
-    for (auto &entry : MNT) {
-        cout << entry.first << "    --> " << entry.second.first << "   --> " << entry.second.second << "\n";
-    }
-    
-    // Display MDT
-    cout << "\nMDT (Macro Definition Table):\n";
-    cout << "MDTC --> Macro Definition Line\n";
-    for (auto &entry : MDT) {
-        cout << entry.first << "    --> " << entry.second << "\n";
+
+    a.open("apass1.asm");
+
+    int z = 0;
+    while(getline(a,h)){
+
+        if(!h.find("%macro")){
+            int w = 1;
+            string g = "";
+            for(int i=7;i<h.length();i++){
+                if(w == 0){
+                    g+=h[i];
+                }
+
+                if(h[i] == ' '){
+                    w = 0;
+                }
+
+
+            }
+            z++;
+            ALA.push_back(make_pair(z,g));
+        }
+
     }
 
-    // Display ALA
-    cout << "\nALA (Argument List Array):\n";
-    cout << "Index --> Formal --> Actual\n";
-    for (auto &entry : ALA) {
-        cout<< entry.index << "     --> " << entry.formal << "     --> " << entry.actual << "\n";
+
+
+
+
+
+    a.close();
+    
+    cout<<"MNT is as follows -->> \n";
+    cout<<"MNTC --> MACRO --> MDTC \n";
+    for(auto d : MNT){
+    	cout<<d.first<<" --> "<<d.second.first<< " --> "<<d.second.second<< "\n";
+    
     }
+    
+    cout<<"\n\nMDT is as follows -->> \n";
+    cout<<"MDTC --> DEF \n";
+    for(auto d : MDT){
+    	cout<<d.first<<" --> "<<d.second<< "\n";
+    
+    }
+
+
+    cout<<"\n\nALA is as follows -->> \n";
+    cout<<"MDTC --> ARG \n";
+    for(auto d : ALA){
+    	cout<<d.first<<" --> "<<d.second<< "\n";
+    
+    }
+    
+    
+    
     
     return 0;
 }
