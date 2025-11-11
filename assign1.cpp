@@ -54,7 +54,7 @@ int main() {
             for (int g = 0; g < POT.size(); g++) {
                 if (h.find(POT[g]) != string::npos) {  
                     y++;
-                    m.push_back(make_pair(make_pair(y, POT[g]), make_pair(1, "is")));  // Corrected this
+                    p.push_back(make_pair(make_pair(y, POT[g]), make_pair(1, "is")));  
                 }
             }
         }
