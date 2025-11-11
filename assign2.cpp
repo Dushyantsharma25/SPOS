@@ -1,7 +1,5 @@
 #include<iostream>
 #include<string>
-#include<algorithm>
-#include<cmath>
 #include<vector>
 #include<fstream>
 #include<utility>  
@@ -10,12 +8,13 @@ using namespace std;
 
 int main() {
 
-    vector<pair<int, pair<string,int>>> MNT;   // (MNCT, name ,MDTC);=
+    vector<pair<int, pair<string,int>>> MNT;   // (MNTC, name ,MDTC);=
     vector<pair<int, string>> MDT; // (MDTC , Def);=
+    vector<pair<int,string>> ALA; //(MDTC,ARG);
   
     
     ifstream a;
-    a.open("Assign2.asm");  // Changed to ifstream to read the file
+    a.open("Assign2.asm");  
     
     string h;
     int i = 0;
@@ -42,9 +41,9 @@ int main() {
     
     a.close();
     
-    a.open("Assign2.asm");  // Changed to ifstream to read the file
+    a.open("Assign2.asm");  
     
-    //i = 0;
+    
     
     for(auto d : MNT){
     	
@@ -73,6 +72,39 @@ int main() {
     }
 
     a.close();
+
+
+    a.open("Assign2.asm");
+
+    int z = 0;
+    while(getline(a,h)){
+
+        if(!h.find("%macro")){
+            int w = 1;
+            string g = "";
+            for(int i=7;i<h.length();i++){
+                if(w == 0){
+                    g+=h[i];
+                }
+
+                if(h[i] == ' '){
+                    w = 0;
+                }
+
+
+            }
+            z++;
+            ALA.push_back(make_pair(z,g));
+        }
+
+    }
+
+
+
+
+
+
+    a.close();
     
     cout<<"MNT is as follows -->> \n";
     cout<<"MNTC --> MACRO --> MDTC \n";
@@ -87,6 +119,15 @@ int main() {
     	cout<<d.first<<" --> "<<d.second<< "\n";
     
     }
+
+
+    cout<<"\n\nALA is as follows -->> \n";
+    cout<<"MDTC --> ARG \n";
+    for(auto d : ALA){
+    	cout<<d.first<<" --> "<<d.second<< "\n";
+    
+    }
+    
     
     
     
