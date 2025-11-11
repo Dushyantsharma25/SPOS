@@ -14,7 +14,7 @@ int main() {
   
     
     ifstream a;
-    a.open("apass1.asm");  
+    a.open("Assign2.asm");  
     
     string h;
     int i = 0;
@@ -41,7 +41,7 @@ int main() {
     
     a.close();
     
-    a.open("apass1.asm");  
+    a.open("Assign2.asm");  
     
     
     
@@ -74,7 +74,7 @@ int main() {
     a.close();
 
 
-    a.open("apass1.asm");
+    a.open("Assign2.asm");
 
     int z = 0;
     while(getline(a,h)){
